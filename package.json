@@ -1,0 +1,23 @@
+{
+  "name": "ressource_catalog_service",
+  "version": "1.0.0",
+  "description": "Ressource Catalog Microservice for Learning Path Generator App",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Halil27-GZT/ressource_catalog_service.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Halil27-GZT/ressource_catalog_service/issues"
+  },
+  "homepage": "https://github.com/Halil27-GZT/ressource_catalog_service#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
