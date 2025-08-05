@@ -4,11 +4,12 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 
 const app = express();
+app.use(express.json());
 
 const port = 5002;
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const data_file = path.join(__dirname, 'data', 'resources.json');
+const data_file = path.join(__dirname, 'data', ' .json');
 
 app.get('/', (req, res) => {
     res.send('Welcome to Resource Catalog');
@@ -44,7 +45,7 @@ app.get('/resources/:id', (req, res) => {
 
 
 
-    app.listen(port, () => {
-        console.log(`Server is running at http://localhost:${port}`);
+app.listen(port, () => {
+    console.log(`Server is running at http://localhost:${port}`);
 });
 
