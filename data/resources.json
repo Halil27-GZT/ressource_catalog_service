@@ -4,7 +4,8 @@
     "title": "Einführung in die Webentwicklung",
     "type": "Kurs",
     "authorId": "a1b2c3d4",
-    "url": "http://example.com/webdev"
+    "url": "http://example.com/webdev",
+    "description": "In diesem Kurs lernt man die Grundlagen der Webentwicklung."
   },
   {
     "id": "2",
@@ -27,6 +28,24 @@
   },
   {
     "id": "c10742f4-b429-472b-a5d0-26a841b6deec",
+    "title": "Einführung in Python",
+    "type": "Kurs",
+    "url": "http://example.com/python"
+  },
+  {
+    "id": "a253280a-425f-4c21-8e51-36539010ff27",
+    "title": "Einführung in Python",
+    "type": "Kurs",
+    "url": "http://example.com/python"
+  },
+  {
+    "id": "97fb9c7e-c344-4559-9b20-fde09c6e8eb8",
+    "title": "Einführung in Python",
+    "type": "Kurs",
+    "url": "http://example.com/python"
+  },
+  {
+    "id": "962594e5-e470-4211-9061-b9242754d854",
     "title": "Einführung in Python",
     "type": "Kurs",
     "url": "http://example.com/python"
