@@ -1,4 +1,5 @@
 import 'dotenv/config'; // Importiere Umgebungsvariablen aus der .env-Datei
+import cors from 'cors'; // Importiere CORS, um Cross-Origin Resource Sharing zu ermöglichen
 import express from 'express'; // Importiere das Express-Modul
 import resourcesRouter from './routes/resources.js'; // Importiere den Ressourcen-Router
 import { errorHandler } from './middleware/error-handler.js'; // Importiere die Fehlerbehandlungs-Middleware
@@ -9,6 +10,8 @@ const app = express(); // Erstelle eine neue Express-Anwendung
 
 // Middleware (pre-routing)
 app.use(express.json()); // Middleware zum Parsen von JSON-Daten im Request-Body
+
+app.use(cors()); // Middleware, um CORS zu aktivieren, damit Anfragen von anderen Ursprüngen erlaubt sind
 
 // Routes
 app.use('/resources', resourcesRouter); // Registriere den Ressourcen-Router unter dem Pfad /resources
