@@ -13,14 +13,23 @@ const data_file = path.join(__dirname, '../data', 'resources.json'); // Definier
 
 
 router.get('/', (req, res, next) => { // Alle Ressourcen laden
-    try { 
-        const data = readFileSync(data_file, 'utf8'); // hier wird die Datei synchron gelesen
-        
-        const resources = JSON.parse(data); // hier wird der JSON-String in ein JavaScript-Array umgewandelt
-        res.json(resources); // Sende die Ressourcen als JSON-Antwort zurück
-    } catch (error) { // Fehlerbehandlung an die Fehlerbehandlungs-Middleware weiterleiten
-        next(error); 
-        // res.status(500).json({ error: 'Interner Serverfehler beim Laden der Ressourcen-Daten.' });
+    try {
+        const data = readFileSync(data_file, 'utf8'); // Hier wird die Datei synchron gelesen
+        let resources = JSON.parse(data); // Hier wird der JSON-String in ein JavaScript-Array umgewandelt
+
+        const { type, authorId } = req.query; // Extrahiere die Query-Parameter 'type' und 'authorId' aus der Anfrage
+
+        if (type) {
+            resources = resources.filter(r => r.type === type); // Hier wird nach dem Typ gefiltert
+        }
+
+        if (authorId) {
+            resources = resources.filter(r => r.authorId === authorId); // Hier wird nach der authorId gefiltert
+        }
+
+        res.json(resources); // Gefiltertes Array zurückgeben
+    } catch (error) {
+        next(error); // Fehler weitergeben
     }
 });
 
