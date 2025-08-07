@@ -96,7 +96,7 @@ router.put('/:id', (req, res, next) => { // Eine Ressource aktualisieren
         const resourceIndex = resources.findIndex(r => r.id === resourceId); // Suche den Index der Ressource im Array nach der ID
 
         // 4. Wenn die Ressource nicht existiert, dann 404
-        if (resourceIndex === -1) {
+        if (resourceIndex === -1) { // Wenn die Ressource nicht gefunden wurde
             res.status(404).json({ error: `Ressource mit ID ${resourceId} nicht gefunden.` }); // Wenn die Ressource nicht gefunden wurde, sende eine 404-Fehlermeldung zurück
             return;
         }
