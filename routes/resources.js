@@ -12,65 +12,61 @@ const __dirname = path.dirname(__filename); // Hole das Verzeichnis der aktuelle
 const data_file = path.join(__dirname, '../data', 'resources.json'); // Definiere den Pfad zur JSON-Datei, die die Ressourcen enthält
 
 
-router.get('/', (req, res, next) => {
-    try {
-        const data = readFileSync(data_file, 'utf8');
-        const resources = JSON.parse(data);
-        res.json(resources);
-    } catch (error) {
-        // Fehler an die Fehlerbehandlungs-Middleware weiterleiten
-        next(error);
+router.get('/', (req, res, next) => { // Alle Ressourcen laden
+    try { 
+        const data = readFileSync(data_file, 'utf8'); // hier wird die Datei synchron gelesen
+        
+        const resources = JSON.parse(data); // hier wird der JSON-String in ein JavaScript-Array umgewandelt
+        res.json(resources); // Sende die Ressourcen als JSON-Antwort zurück
+    } catch (error) { // Fehlerbehandlung an die Fehlerbehandlungs-Middleware weiterleiten
+        next(error); 
         // res.status(500).json({ error: 'Interner Serverfehler beim Laden der Ressourcen-Daten.' });
     }
 });
 
 
-router.get('/:id', (req, res, next) => {
+router.get('/:id', (req, res, next) => { // Eine einzelne Ressource nach ID laden
     try {
-        const resourceId = req.params.id;
-        const data = readFileSync(data_file, 'utf8');
-        const resources = JSON.parse(data);
-        const resource = resources.find(r => r.id === resourceId);
+        const resourceId = req.params.id; // ID aus den URL-Parametern extrahieren
+        const data = readFileSync(data_file, 'utf8'); // Dateiinhalt lesen
+        const resources = JSON.parse(data); // JSON-String in ein JavaScript-Array umwandeln
+        const resource = resources.find(r => r.id === resourceId); // Die Ressource nach der ID suchen
 
-        if (resource) {
-            res.json(resource);
-        } else {
-            res.status(404).json({ error: `Ressource mit ID ${resourceId} nicht gefunden.` })
+        if (resource) { // Wenn die Ressource gefunden wurde, sende sie als JSON-Antwort zurück
+            res.json(resource); // Sende die gefundene Ressource als JSON-Antwort zurück
+        } else { // Wenn die Ressource nicht gefunden wurde, sende eine 404-Fehlermeldung
+            res.status(404).json({ error: `Ressource mit ID ${resourceId} nicht gefunden.` }) // Sende eine 404-Fehlermeldung zurück
         }
 
-    } catch (error) {
-        // Fehler an die Fehlerbehandlungs-Middleware weiterleiten
+    } catch (error) { // Fehlerbehandlung an die Fehlerbehandlungs-Middleware weiterleiten
         next(error);
         // res.status(500).json({ error: 'Interner Serverfehler beim Laden der Ressourcen-Daten.' });
     }
 });
 
 
-router.post('/', (req, res, next) => {
-    const newData = req.body;
-
-    if (!newData.title || !newData.type) {
-        res.status(400).json({ error: 'title und type sind erforderlich.' });
-        return;
+router.post('/', (req, res, next) => { // Neue Ressource erstellen
+    const newData = req.body; // Die neuen Daten aus dem Request-Body extrahieren
+    if (!newData.title || !newData.type) { // Überprüfen, ob die erforderlichen Felder vorhanden sind
+        res.status(400).json({ error: 'title und type sind erforderlich.' }); // Wenn nicht, sende eine 400-Fehlermeldung zurück
+        return; // Beende die Funktion, wenn die erforderlichen Felder fehlen
     }
 
-    // 1. Neues Resource Objekt
-
-    const newResource = {
-        id: uuidv4(),
-        ...newData
+    const newResource = { // Erstelle ein neues Resource-Objekt
+        id: uuidv4(), // Generiere eine eindeutige ID für die neue Ressource
+        ...newData // Füge die neuen Daten in das Resource-Objekt ein
     }
 
-    try {
+    try { // Speichere die neue Ressource in der Datei
         // 2. Vorhandene Daten aus der Datei lesen und in einem Array speichern.
-        const data = readFileSync(data_file, 'utf8');
-        const resources = JSON.parse(data);
+        const data = readFileSync(data_file, 'utf8'); // Lese die Dateiinhalt synchron
+        const resources = JSON.parse(data); // Wandle den JSON-String in ein JavaScript-Array um
         // 3. Das neue Objekt in das Array hinzufuegen.
-        resources.push(newResource);
+        resources.push(newResource); // Füge die neue Ressource zum Array der vorhandenen Ressourcen hinzu
         // 4. Das neue Array in die Datei schreiben.
-        writeFileSync(data_file, JSON.stringify(resources, null, 2), 'utf8');
+        writeFileSync(data_file, JSON.stringify(resources, null, 2), 'utf8'); // Speichere das aktualisierte Array in der Datei, formatiert mit 2 Leerzeichen Einrückung
         // 5. Antwort schicken.
-        res.status(201).json(newResource);
+        res.status(201).json(newResource); // Sende die neu erstellte Ressource als JSON-Antwort zurück mit Status 201 (Created)
     } catch (error) {
         // Fehler an die Fehlerbehandlungs-Middleware weiterleiten
         next(error);
@@ -80,28 +76,28 @@ router.post('/', (req, res, next) => {
 });
 
 
-router.put('/:id', (req, res, next) => {
+router.put('/:id', (req, res, next) => { // Eine Ressource aktualisieren
     // 1. ID auslesen
-    const resourceId = req.params.id;
-    const newData = req.body;
+    const resourceId = req.params.id; // ID aus den URL-Parametern extrahieren
+    const newData = req.body; // Die neuen Daten aus dem Request-Body extrahieren
 
-    if (Object.keys(newData).length === 0) {
-        res.status(400).json({ error: 'Keine Daten zum Aktualisieren vorhanden.' });
-        return;
+    if (Object.keys(newData).length === 0) { // Überprüfen, ob neue Daten zum Aktualisieren vorhanden sind
+        res.status(400).json({ error: 'Keine Daten zum Aktualisieren vorhanden.' }); // Wenn nicht, sende eine 400-Fehlermeldung zurück
+        return; // Beende die Funktion, wenn keine neuen Daten zum Aktualisieren vorhanden sind
     }
 
     try {
         // 2. Alle Ressourcen laden
-        const data = readFileSync(data_file, 'utf8');
-        const resources = JSON.parse(data);
+        const data = readFileSync(data_file, 'utf8'); // Lese die Dateiinhalt synchron
+        const resources = JSON.parse(data); // Wandle den JSON-String in ein JavaScript-Array um
 
         // 3. Die Ressource nach der ID suchen
         // const resource = resources.find(r => r.id === resourceId);
-        const resourceIndex = resources.findIndex(r => r.id === resourceId);
+        const resourceIndex = resources.findIndex(r => r.id === resourceId); // Suche den Index der Ressource im Array nach der ID
 
         // 4. Wenn die Ressource nicht existiert, dann 404
         if (resourceIndex === -1) {
-            res.status(404).json({ error: `Ressource mit ID ${resourceId} nicht gefunden.` });
+            res.status(404).json({ error: `Ressource mit ID ${resourceId} nicht gefunden.` }); // Wenn die Ressource nicht gefunden wurde, sende eine 404-Fehlermeldung zurück
             return;
         }
 
@@ -154,4 +150,4 @@ router.delete('/:id', (req, res, next) => {
     }
 });
 
-export default router;
+export default router; // Exportiere den Router, damit er in anderen Dateien verwendet werden kann

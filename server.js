@@ -1,20 +1,20 @@
-import express from 'express';
-import resourcesRouter from './routes/resources.js';
-import { errorHandler } from './middleware/error-handler.js';
+import express from 'express'; // Importiere das Express-Modul
+import resourcesRouter from './routes/resources.js'; // Importiere den Ressourcen-Router
+import { errorHandler } from './middleware/error-handler.js'; // Importiere die Fehlerbehandlungs-Middleware
 
-const port = 5002;
+const port = 5002; // Definiere den Port, auf dem der Server laufen soll
 
-const app = express();
+const app = express(); // Erstelle eine neue Express-Anwendung
 
 // Middleware (pre-routing)
-app.use(express.json());
+app.use(express.json()); // Middleware zum Parsen von JSON-Daten im Request-Body
 
 // Routes
-app.use('/resources', resourcesRouter);
+app.use('/resources', resourcesRouter); // Registriere den Ressourcen-Router unter dem Pfad /resources
 
 // globale Fehlerbehandlung Middleware (post-routing)
 app.use(errorHandler);
 
-app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
-});
+app.listen(port, () => { // Starte den Server und 
+    console.log(`Server is running at http://localhost:${port}`); // gebe eine Nachricht in der Konsole aus, wenn der Server läuft
+}); 
