@@ -75,5 +75,47 @@
     "ratingValue": 3,
     "userId": "user_xyz",
     "timestamp": "2025-08-08T09:04:05.457Z"
+  },
+  {
+    "id": "326bde66-b061-4510-84d8-6f4363877b71",
+    "resourceId": "2",
+    "ratingValue": 3,
+    "userId": "user_a",
+    "timestamp": "2025-08-08T10:35:57.665Z"
+  },
+  {
+    "id": "46c3e110-4e02-4ce2-98e0-98bdd80cfef5",
+    "resourceId": "2",
+    "ratingValue": 5,
+    "userId": "user_b",
+    "timestamp": "2025-08-08T10:35:58.089Z"
+  },
+  {
+    "id": "938233e0-a5c1-4afc-a294-94dcd01eb41d",
+    "resourceId": "2",
+    "ratingValue": 4,
+    "userId": "user_c",
+    "timestamp": "2025-08-08T10:35:58.481Z"
+  },
+  {
+    "id": "55b683d8-cb7f-4199-86a8-e85fbbcfa1dd",
+    "resourceId": "2",
+    "ratingValue": 3,
+    "userId": "user_a",
+    "timestamp": "2025-08-08T10:35:58.809Z"
+  },
+  {
+    "id": "c0eacaf7-32af-48fa-9881-835107206a68",
+    "resourceId": "2",
+    "ratingValue": 5,
+    "userId": "user_b",
+    "timestamp": "2025-08-08T10:35:59.395Z"
+  },
+  {
+    "id": "f7801fea-1d3b-4095-a43f-d7b8ba787dfd",
+    "resourceId": "2",
+    "ratingValue": 3,
+    "userId": "user_xyz",
+    "timestamp": "2025-08-08T10:37:45.903Z"
   }
 ]

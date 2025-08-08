@@ -55,5 +55,20 @@
     "title": "Einführung in Python",
     "type": "Kurs",
     "url": "http://example.com/python"
+  },
+  {
+    "id": "27af1d0b-81af-4616-ba02-3b85bd3f31e0",
+    "resourceId": "2",
+    "ratingValue": 3,
+    "userId": "Halil_user_xyz",
+    "timestamp": "2025-08-08T08:42:56.503Z"
+  },
+  {
+    "id": "521e9f18-fdfa-454e-8647-f50ab1067297",
+    "resourceId": "1",
+    "ratingValue": 5,
+    "userId": "user_abc",
+    "timestamp": "2025-08-08T08:58:12.044Z"
   }
+  
 ]

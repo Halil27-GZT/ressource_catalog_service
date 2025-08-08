@@ -15,7 +15,7 @@ const RATINGS_FILE = path.join(__dirname, '../data', 'ratings.json'); // Definie
 
 router.get('/', (req, res, next) => { // Alle Ressourcen laden
     try {
-        const data = readFileSync(data_file, 'utf8'); // Hier wird die Datei synchron gelesen
+        const data = fs.readFileSync(data_file, 'utf8'); // Hier wird die Datei synchron gelesen
         let resources = JSON.parse(data); // Hier wird der JSON-String in ein JavaScript-Array umgewandelt
 
         const { type, authorId } = req.query; // Extrahiere die Query-Parameter 'type' und 'authorId' aus der Anfrage
@@ -38,11 +38,20 @@ router.get('/', (req, res, next) => { // Alle Ressourcen laden
 router.get('/:id', (req, res, next) => { // Eine einzelne Ressource nach ID laden
     try {
         const resourceId = req.params.id; // ID aus den URL-Parametern extrahieren
-        const data = readFileSync(data_file, 'utf8'); // Dateiinhalt lesen
+        const ratingsData = fs.readFileSync(RATINGS_FILE, 'utf-8'); // Bewertungen aus der Datei lesen
+        const allRatings = JSON.parse(ratingsData); // Alle Bewertungen laden
+        const resourceRatings = allRatings.filter(rating => rating.resourceId === resourceId); // Alle Bewertungen für die Ressource laden
+        let averageRating = 0; // Durchschnittsbewertung initialisieren
+        if (resourceRatings.length > 0) { // Wenn es Bewertungen gibt
+            const sumOfRatings = resourceRatings.reduce((sum, rating) => sum + rating.ratingValue, 0); // Summe der Bewertungen berechnen
+            averageRating = sumOfRatings / resourceRatings.length; // Durchschnitt berechnen
+        }
+        const data = fs.readFileSync(data_file, 'utf8'); // Dateiinhalt lesen
         const resources = JSON.parse(data); // JSON-String in ein JavaScript-Array umwandeln
         const resource = resources.find(r => r.id === resourceId); // Die Ressource nach der ID suchen
 
         if (resource) { // Wenn die Ressource gefunden wurde, sende sie als JSON-Antwort zurück
+            resource.averageRating = averageRating; // Füge die Durchschnittsbewertung zur Ressource hinzu
             res.json(resource); // Sende die gefundene Ressource als JSON-Antwort zurück
         } else { // Wenn die Ressource nicht gefunden wurde, sende eine 404-Fehlermeldung
             res.status(404).json({ error: `Ressource mit ID ${resourceId} nicht gefunden.` }) // Sende eine 404-Fehlermeldung zurück
@@ -69,12 +78,12 @@ router.post('/', (req, res, next) => { // Neue Ressource erstellen
 
     try { // Speichere die neue Ressource in der Datei
         // 2. Vorhandene Daten aus der Datei lesen und in einem Array speichern.
-        const data = readFileSync(data_file, 'utf8'); // Lese die Dateiinhalt synchron
+        const data = fs.readFileSync(data_file, 'utf8'); // Lese die Dateiinhalt synchron
         const resources = JSON.parse(data); // Wandle den JSON-String in ein JavaScript-Array um
         // 3. Das neue Objekt in das Array hinzufuegen.
         resources.push(newResource); // Füge die neue Ressource zum Array der vorhandenen Ressourcen hinzu
         // 4. Das neue Array in die Datei schreiben.
-        writeFileSync(data_file, JSON.stringify(resources, null, 2), 'utf8'); // Speichere das aktualisierte Array in der Datei, formatiert mit 2 Leerzeichen Einrückung
+        fs.writeFileSync(data_file, JSON.stringify(resources, null, 2), 'utf8'); // Speichere das aktualisierte Array in der Datei, formatiert mit 2 Leerzeichen Einrückung
         // 5. Antwort schicken.
         res.status(201).json(newResource); // Sende die neu erstellte Ressource als JSON-Antwort zurück mit Status 201 (Created)
     } catch (error) {
@@ -128,7 +137,7 @@ router.put('/:id', (req, res, next) => { // Eine Ressource aktualisieren
 
     try {
         // 2. Alle Ressourcen laden
-        const data = readFileSync(data_file, 'utf8'); // Lese die Dateiinhalt synchron
+        const data = fs.readFileSync(data_file, 'utf8'); // Lese die Dateiinhalt synchron
         const resources = JSON.parse(data); // Wandle den JSON-String in ein JavaScript-Array um
 
         // 3. Die Ressource nach der ID suchen
@@ -145,7 +154,7 @@ router.put('/:id', (req, res, next) => { // Eine Ressource aktualisieren
         resources[resourceIndex] = { ...resources[resourceIndex], ...newData };
 
         // 6. Updates in der Datei speichern.
-        writeFileSync(data_file, JSON.stringify(resources, null, 2), 'utf8');
+        fs.writeFileSync(data_file, JSON.stringify(resources, null, 2), 'utf8');
 
         res.status(200).json(resources[resourceIndex]); // 7. Antwort schicken
 
@@ -163,7 +172,7 @@ router.delete('/:id', (req, res, next) => {
     const resourceId = req.params.id;
     try {
         // 2. Alle Ressourcen laden
-        const data = readFileSync(data_file, 'utf8');
+        const data = fs.readFileSync(data_file, 'utf8');
         const resources = JSON.parse(data);
 
         // 3. Die Ressource nach der ID suchen
@@ -179,7 +188,7 @@ router.delete('/:id', (req, res, next) => {
         resources.splice(resourceIndex, 1);
 
         // 6. Updates in der Datei speichern.
-        writeFileSync(data_file, JSON.stringify(resources, null, 2), 'utf8');
+        fs.writeFileSync(data_file, JSON.stringify(resources, null, 2), 'utf8');
 
         res.status(204).send(); // 7. Leere Antwort mit Status 204 zurückgeben
 
