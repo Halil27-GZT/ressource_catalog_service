@@ -1,5 +1,5 @@
 import express from 'express'; // Importiere express für die Router-Funktionalität
-import { readFileSync, writeFileSync } from 'fs'; // Importiere Funktionen zum Lesen und Schreiben von Dateien
+import * as fs from 'node:fs'; // Importiere Funktionen zum Lesen und Schreiben von Dateien
 import path from 'path'; // Importiere path für die Dateipfade
 import { fileURLToPath } from 'url'; // Importiere fileURLToPath, um den Dateipfad aus der URL zu extrahieren
 import { v4 as uuidv4 } from 'uuid'; // Importiere uuidv4 für die Generierung von eindeutigen IDs
@@ -10,6 +10,7 @@ const router = express.Router(); // Erstelle einen neuen Router
 const __filename = fileURLToPath(import.meta.url); // Hole den aktuellen Dateinamen
 const __dirname = path.dirname(__filename); // Hole das Verzeichnis der aktuellen Datei
 const data_file = path.join(__dirname, '../data', 'resources.json'); // Definiere den Pfad zur JSON-Datei, die die Ressourcen enthält
+const RATINGS_FILE = path.join(__dirname, '../data', 'ratings.json'); // Definiere den Pfad zur JSON-Datei, die die Bewertungen enthält
 
 
 router.get('/', (req, res, next) => { // Alle Ressourcen laden
@@ -82,6 +83,36 @@ router.post('/', (req, res, next) => { // Neue Ressource erstellen
         // res.status(500).json({ error: 'Interner Serverfehler beim Speichern der Ressourcen-Daten.' });
     }
 
+});
+
+
+router.post('/:resourceId/ratings', (req, res, next) => { // Neue Bewertung für eine Ressource erstellen
+    const resourceId = req.params.resourceId; // ID der Ressource aus den URL-Parametern extrahieren
+    const { ratingValue, userId } = req.body; // Extrahiere die Bewertung und die Benutzer-ID aus dem Request-Body
+    if (!ratingValue || ratingValue < 1 || ratingValue > 5 || !Number.isInteger(ratingValue)) { // Überprüfen, ob die Bewertung gültig ist
+        res.status(400).json({ error: 'Bewertung muss eine ganze Zahl zwischen 1 und 5 sein.' }); // Wenn nicht, sende eine 400-Fehlermeldung zurück
+        return; // Beende die Funktion, wenn die Bewertung ungültig ist
+    }
+
+        const newRating = {
+        id: uuidv4(), // Generiere eine eindeutige ID für die Bewertung selbst
+        resourceId: resourceId,
+        ratingValue: ratingValue,
+        userId: userId || 'anonymous', // Verwende 'anonymous' wenn keine userId übergeben wird
+        timestamp: new Date().toISOString() // Füge einen Zeitstempel hinzu
+    };
+
+        try {
+        const data = fs.readFileSync(RATINGS_FILE, 'utf-8'); // Lese die Ratings-Datei synchron
+        const ratings = JSON.parse(data); // Wandle den JSON-String in ein JavaScript-Array um
+        ratings.push(newRating); // Füge die neue Bewertung zum Array der vorhandenen Bewertungen hinzu
+        const newRatingData = JSON.stringify(ratings, null, 2); // Wandle das aktualisierte Array in einen JSON-String um
+        fs.writeFileSync(RATINGS_FILE, newRatingData, 'utf-8'); // Speichere die aktualisierten Bewertungen in der Datei
+        res.status(201).json(newRating); // Sende die neu erstellte Bewertung als JSON-Antwort zurück mit Status 201 (Created)
+        } catch (error) {
+        console.error('Fehler beim Schreiben der Bewertung in die Datei:', error);
+        next(error); // Leite den Fehler an die zentrale Fehler-Middleware weiter
+    }
 });
 
 
